@@ -99,10 +99,10 @@ Q =  [19000   0     0     0;
  
 R = 0.00001;
 
-[k1,S,E] = lqr(A,B,Q,R);
-Kpre=inv(-(C-D*k1)*inv(A-B*k1)*B+D);
+[klqr,S,E] = lqr(A,B,Q,R);
+Kpre=inv(-(C-D*klqr)*inv(A-B*klqr)*B+D);
 
-plant_uclqr=ss(A-B*k1, B, C, D);
+plant_uclqr=ss(A-B*klqr, B, C, D);
 % 
 [y1,t]=step(plant_uclqr); 
 
@@ -116,10 +116,10 @@ plant_uclqr=ss(A-B*k1, B, C, D);
 [y7,t7]=step(plant_ucitaei);plant_ucitaei_r=stepinfo(y7,t7);
 [y8,t8]=step(plant_uclqr);plant_uclqr_r=stepinfo(y8,t8);
 
-ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT KPRE';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE KPRE';'ITAE INTEGRAL';'LQR'};
-RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uckpre_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaek_r.RiseTime;plant_ucitaei_r.RiseTime;plant_uclqr_r.RiseTime};
-SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uckpre_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaek_r.SettlingTime;plant_ucitaei_r.SettlingTime;plant_uclqr_r.SettlingTime};
-Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uckpre_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaek_r.Overshoot;plant_ucitaei_r.Overshoot;plant_uclqr_r.Overshoot};
+ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE INTEGRAL';'LQR'};
+RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaei_r.RiseTime;plant_uclqr_r.RiseTime};
+SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaei_r.SettlingTime;plant_uclqr_r.SettlingTime};
+Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaei_r.Overshoot;plant_uclqr_r.Overshoot};
 
 T=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(T)
@@ -147,4 +147,4 @@ PI=1.5;
 PO=0.001;
 %Parametric uncertainty
 INC=1.05;
-A1 = [0 1 0 0;(-c/t1)*INC (-(d1+d)/t1)*INC (-c/t1)*INC (-d/t1)*INC; 0 0 0 1; (-c/t2)*INC (-d/t2)*INC (-c/t2)*INC (-(d2+d)/t2)*INC];
+A1 = [0 1 0 0;(-c/th1)*INC (-(d1+d)/th1)*INC (-c/th1)*INC (-d/th1)*INC; 0 0 0 1; (-c/th2)*INC (-d/th2)*INC (-c/th2)*INC (-(d2+d)/th2)*INC];
