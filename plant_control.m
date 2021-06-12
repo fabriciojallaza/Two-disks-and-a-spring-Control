@@ -43,8 +43,8 @@ plant_uc=ss(A-B*k1, B, C-D*k1, D); %with pre compensation gai
 
 %Pole placement with statit error
 %Kpre Gain
-kpre=1/-((C-D*k1)*inv(A-B*k1)*B-D);
-plant_uckpre=ss(A-B*k1,B*kpre,C-D*k1,D*kpre);
+% kpre=1/-((C-D*k1)*inv(A-B*k1)*B-D);
+% plant_uckpre=ss(A-B*k1,B*kpre,C-D*k1,D*kpre);
 
 %Integral part
 n=size(A);
@@ -79,12 +79,13 @@ pin5=itaepol2(5);
 
 %Control implementation
 ki=place(A,B,[pi1,pi2,pi3,pi4]);
-plant_ucitae=ss(A-B*ki, B, C-D*ki, D);
+kpi=1/-((C-D*ki)*inv(A-B*ki)*B-D);
+plant_ucitae=ss(A-B*ki, B*kpi, C-D*ki, D*kpi);
 
 %ITAE with static error
 %Kpre Gain
-kprei=1/-((C-D*ki)*inv(A-B*ki)*B-D);
-plant_ucitaek=ss(A-B*ki,B*kprei,C-D*ki,D*kprei);
+% kprei=1/-((C-D*ki)*inv(A-B*ki)*B-D);
+% plant_ucitaek=ss(A-B*ki,B*kprei,C-D*ki,D*kprei);
 %Integral Part
 kiext=place(Aext,Bext,[pin1,pin2,pin3,pin4,pin5]);
 ki2=kiext(1:n);
@@ -108,10 +109,10 @@ plant_uclqr=ss(A-B*k1, B, C, D);
 %% table generations
 [y1,t1]=step(plant);plant_r=stepinfo(y1,t1);
 [y2,t2]=step(plant_uc);plant_uc_r=stepinfo(y2,t2);
-[y3,t3]=step(plant_uckpre);plant_uckpre_r=stepinfo(y3,t3);
+% [y3,t3]=step(plant_uckpre);plant_uckpre_r=stepinfo(y3,t3);
 [y4,t4]=step(plant_uci);plant_uci_r=stepinfo(y4,t4);
 [y5,t5]=step(plant_ucitae);plant_ucitae_r=stepinfo(y5,t5);
-[y6,t6]=step(plant_ucitaek);plant_ucitaek_r=stepinfo(y6,t6);
+% [y6,t6]=step(plant_ucitaek);plant_ucitaek_r=stepinfo(y6,t6);
 [y7,t7]=step(plant_ucitaei);plant_ucitaei_r=stepinfo(y7,t7);
 [y8,t8]=step(plant_uclqr);plant_uclqr_r=stepinfo(y8,t8);
 
@@ -123,20 +124,27 @@ Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uckpre_r.Overshoot;plant
 T=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(T)
 %% Simulations
-subplot(421);
+subplot(321);
 step(plant), grid on, title('PLANT')
-subplot(422);
+subplot(322);
 step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
-subplot(423);
-step(plant_uckpre), grid on, title('PLANT - POLE PLACEMENT KPRE')
-subplot(424);
+% subplot(423);
+% step(plant_uckpre), grid on, title('PLANT - POLE PLACEMENT KPRE')
+subplot(323);
 step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
-subplot(425);
+subplot(324);
 step(plant_ucitae), grid on, title('PLANT UNDER CONTROL ITAE')
-subplot(426);
-step(plant_ucitaek), grid on, title('PLANT - ITAE KPRE')
-subplot(427);
+% subplot(426);
+% step(plant_ucitaek), grid on, title('PLANT - ITAE KPRE')
+subplot(325);
 step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
-subplot(428);
+subplot(326);
 step(plant_uclqr), grid on, title('PLANT UNDER CONTROL LQR')
 
+%% Simulink
+%Input and output disturbances
+PI=1.5;
+PO=0.001;
+%Parametric uncertainty
+INC=1.05;
+A1 = [0 1 0 0;(-c/t1)*INC (-(d1+d)/t1)*INC (-c/t1)*INC (-d/t1)*INC; 0 0 0 1; (-c/t2)*INC (-d/t2)*INC (-c/t2)*INC (-(d2+d)/t2)*INC];
