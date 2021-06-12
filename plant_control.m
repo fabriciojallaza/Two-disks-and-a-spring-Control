@@ -37,7 +37,7 @@ p1=-E*wn_prima+wn_prima*sqrt(E^2-1);
 p2=-E*wn_prima-wn_prima*sqrt(E^2-1);
 p3=real(p1)*10;
 p4=real(p1)*100;
-
+p=[p1 p2 p3 p4];
 k1=place(A,B,[p1 p2 p3,p4]);
 plant_uc=ss(A-B*k1, B, C-D*k1, D); %with pre compensation gai
 
@@ -123,6 +123,30 @@ Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_uc
 
 T=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(T)
+
+%% State Observer
+% Design
+PolesObs = p(1:n)*10;
+L = place(A',C', PolesObs)';
+
+% Observer Space State
+Aobs = A - L*C;
+Bobs = [B-L*D L];
+Cobs = eye(n);
+Dobs = zeros(n,2);
+
+% Observer + Controller Space State
+Aoc = A-L*C-B*kn+L*D*kn;
+Boc = [B-L*D L];
+Coc = -kn;
+Doc = [1 0];
+
+% Observer + Controller Space State + Static Control
+Aocc = [A-L*C-B*kn+L*D*kn -B*ke+L*D*ke; zeros(1,n) 0];
+Bocc = [zeros(n,1) L; 1 -1];
+Cocc = [-kn -ke];
+Docc = zeros(1,2);
+
 %% Simulations
 subplot(321);
 step(plant), grid on, title('PLANT')
