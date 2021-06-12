@@ -103,13 +103,25 @@ Kpre=inv(-(C-D*k1)*inv(A-B*k1)*B+D);
 
 plant_uclqr=ss(A-B*k1, B, C, D);
 % 
-[y1,t]=step(plant_uclqr*Kpre); grid on
-stepResults=stepinfo(y1,t);
-aux2=stepResults.SettlingTime
-aux3=stepResults.Overshoot
+[y1,t]=step(plant_uclqr); 
 
+%% table generations
+[y1,t1]=step(plant);plant_r=stepinfo(y1,t1);
+[y2,t2]=step(plant_uc);plant_uc_r=stepinfo(y2,t2);
+[y3,t3]=step(plant_uckpre);plant_uckpre_r=stepinfo(y3,t3);
+[y4,t4]=step(plant_uci);plant_uci_r=stepinfo(y4,t4);
+[y5,t5]=step(plant_ucitae);plant_ucitae_r=stepinfo(y5,t5);
+[y6,t6]=step(plant_ucitaek);plant_ucitaek_r=stepinfo(y6,t6);
+[y7,t7]=step(plant_ucitaei);plant_ucitaei_r=stepinfo(y7,t7);
+[y8,t8]=step(plant_uclqr);plant_uclqr_r=stepinfo(y8,t8);
 
+ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT KPRE';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE KPRE';'ITAE INTEGRAL';'LQR'};
+RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uckpre_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaek_r.RiseTime;plant_ucitaei_r.RiseTime;plant_uclqr_r.RiseTime};
+SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uckpre_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaek_r.SettlingTime;plant_ucitaei_r.SettlingTime;plant_uclqr_r.SettlingTime};
+Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uckpre_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaek_r.Overshoot;plant_ucitaei_r.Overshoot;plant_uclqr_r.Overshoot};
 
+T=table(ControlType,RiseTime,SettlingTime,Overshoot);
+disp(T)
 %% Simulations
 subplot(421);
 step(plant), grid on, title('PLANT')
