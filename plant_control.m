@@ -43,12 +43,12 @@ k=place(A,B,[p1 p2 p3,p4])
 plant_uc=ss(A-B*k, B, C-D*k, D);
 
 %% LQR
-Q =  [100   0     0     0;
-      0     1     0     0;
-      0     0     100     0;
-      0     0     0     1];
+Q =  [19000   0     0     0;
+      0     0     0     0;
+      0     0     19000     0;
+      0     0     0     0];
  
-R = 1.2;
+R = 0.00001;
 
 [k1,S,e] = lqr(A,B,Q,R);
 Kpre=inv(-(C-D*k1)*inv(A-B*k1)*B+D);
@@ -57,8 +57,8 @@ plant_uc2=ss(A-B*k1, B, C, D);
 % 
 [y1,t]=step(plant_uc2*Kpre); grid on
 stepResults=stepinfo(y1,t);
-% stepResults.SettlingTime
-% stepResults.Overshoot
+aux2=stepResults.SettlingTime
+aux3=stepResults.Overshoot
 
 %% Simulations
 subplot(311);
