@@ -15,3 +15,15 @@ B=[0 0;kt1/th1 0; 0 0; 0 kt2/th2];
 C=[1 0 0 0; 0 0 1 0];
 D=[0 0;0 0];
 Plant=ss(A,B,C,D);
+
+%% Controllability and observability
+MC=[B A*B A^2*B];
+MO=[C;C*A;C*A^2];
+cont=det(MC);
+obs=det(MO);
+
+%% Requirements
+ovs=6; %overshoot (less than 6%)
+rt=2; %rise tiem less than 2 seconds
+st=5; %settling time (less than 5 seconds)
+sse; %Steady-state error less than 2%
