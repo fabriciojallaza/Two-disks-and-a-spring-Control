@@ -106,6 +106,19 @@ plant_uclqr=ss(A-B*klqr, B, C, D);
 % 
 [y1,t]=step(plant_uclqr); 
 
+%% State Observer
+% Design
+PolesObs = p(1:n)*10;
+L = place(A',C', PolesObs)';
+
+% Observer + Controller Space State + Static Control
+Aocc = [A-L*C-B*kn+L*D*kn -B*ke+L*D*ke; zeros(1,n) 0];
+Bocc = [zeros(n,1) L; 1 -1];
+Cocc = [-kn -ke];
+Docc = zeros(1,2);
+
+plant_uc_so=ss(Aocc,Bocc,Cocc,Docc);
+step(plant_uc_so); grid on
 %% table generations
 [y1,t1]=step(plant);plant_r=stepinfo(y1,t1);
 [y2,t2]=step(plant_uc);plant_uc_r=stepinfo(y2,t2);
@@ -124,28 +137,7 @@ Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_uc
 T=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(T)
 
-%% State Observer
-% Design
-PolesObs = p(1:n)*10;
-L = place(A',C', PolesObs)';
 
-% Observer Space State
-Aobs = A - L*C;
-Bobs = [B-L*D L];
-Cobs = eye(n);
-Dobs = zeros(n,2);
-
-% Observer + Controller Space State
-Aoc = A-L*C-B*kn+L*D*kn;
-Boc = [B-L*D L];
-Coc = -kn;
-Doc = [1 0];
-
-% Observer + Controller Space State + Static Control
-Aocc = [A-L*C-B*kn+L*D*kn -B*ke+L*D*ke; zeros(1,n) 0];
-Bocc = [zeros(n,1) L; 1 -1];
-Cocc = [-kn -ke];
-Docc = zeros(1,2);
 
 %% Simulations
 subplot(321);
