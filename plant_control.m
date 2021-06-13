@@ -92,33 +92,35 @@ ki2=kiext(1:n);
 kei=kiext(n+1);
 plant_ucitaei=ss([A-B*ki2 -B*kei;-C+D*ki2 D*kei],[zeros(n,1); 1],[C 0],0);
 %% LQR
-Q =  [19000   0     0     0;
+Q =  [100   0     0     0;
       0     0     0     0;
-      0     0     19000     0;
+      0     0     100     0;
       0     0     0     0];
  
-R = 0.00001;
+R = 0.001;
 
 [klqr,S,E] = lqr(A,B,Q,R);
 Kpre=inv(-(C-D*klqr)*inv(A-B*klqr)*B+D);
-
-plant_uclqr=ss(A-B*klqr, B, C, D);
-% 
-[y1,t]=step(plant_uclqr); 
 
 %% State Observer
 % Design
 PolesObs = p(1:n)*10;
 L = place(A',C', PolesObs)';
 
+% Observer + Controller Space State
+Aoc = A-L*C-B*kn+L*D*kn;
+Boc = [B-L*D L];
+Coc = -kn;
+Doc = [1 0];
+plant_uc_obsco=ss(Aoc,Boc,Coc,Doc);
+
 % Observer + Controller Space State + Static Control
 Aocc = [A-L*C-B*kn+L*D*kn -B*ke+L*D*ke; zeros(1,n) 0];
 Bocc = [zeros(n,1) L; 1 -1];
 Cocc = [-kn -ke];
 Docc = zeros(1,2);
+plant_uc_obscosc=ss(Aocc,Bocc,Cocc,Docc);
 
-plant_uc_so=ss(Aocc,Bocc,Cocc,Docc);
-step(plant_uc_so); grid on
 %% table generations
 [y1,t1]=step(plant);plant_r=stepinfo(y1,t1);
 [y2,t2]=step(plant_uc);plant_uc_r=stepinfo(y2,t2);
@@ -128,34 +130,35 @@ step(plant_uc_so); grid on
 % [y6,t6]=step(plant_ucitaek);plant_ucitaek_r=stepinfo(y6,t6);
 [y7,t7]=step(plant_ucitaei);plant_ucitaei_r=stepinfo(y7,t7);
 [y8,t8]=step(plant_uclqr);plant_uclqr_r=stepinfo(y8,t8);
+[y9,t9]=step(plant_uc_obscosc);plant_uc_obscosc_r=stepinfo(y9,t9);
 
-ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE INTEGRAL';'LQR'};
-RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaei_r.RiseTime;plant_uclqr_r.RiseTime};
-SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaei_r.SettlingTime;plant_uclqr_r.SettlingTime};
-Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaei_r.Overshoot;plant_uclqr_r.Overshoot};
+ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE INTEGRAL';'LQR';'STATE OBSERVER'};
+RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaei_r.RiseTime;plant_uclqr_r.RiseTime;plant_uc_obscosc_r(1).RiseTime};
+SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaei_r.SettlingTime;plant_uclqr_r.SettlingTime;plant_uc_obscosc_r(1).SettlingTime};
+Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaei_r.Overshoot;plant_uclqr_r.Overshoot;plant_uc_obscosc_r(1).Overshoot};
 
 T=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(T)
 
-
-
 %% Simulations
-subplot(321);
+subplot(421);
 step(plant), grid on, title('PLANT')
-subplot(322);
+subplot(422);
 step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
 % subplot(423);
 % step(plant_uckpre), grid on, title('PLANT - POLE PLACEMENT KPRE')
-subplot(323);
+subplot(423);
 step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
-subplot(324);
+subplot(424);
 step(plant_ucitae), grid on, title('PLANT UNDER CONTROL ITAE')
 % subplot(426);
 % step(plant_ucitaek), grid on, title('PLANT - ITAE KPRE')
-subplot(325);
+subplot(425);
 step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
-subplot(326);
+subplot(426);
 step(plant_uclqr), grid on, title('PLANT UNDER CONTROL LQR')
+subplot(4,2,[7,8]);
+step(plant_uc_obscosc(2)), grid on, title('PLANT UNDER CONTROL STATE OBSERVER')
 
 %% Simulink
 %Input and output disturbances
