@@ -151,16 +151,15 @@ step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
 sgtitle('SIMULATIONS FROM MATLAB')
 %% Simulink
 %Input and output disturbances
-PI=0.000001;
-PO=0.000001;
+PI=0.00001;
+PO=0.00001;
 %Parametric uncertainty
-INC=25;
+INC=250;
 A1 = [0 1 0 0;(-c/th1)*INC (-(d1+d)/th1)*INC (-c/th1)*INC (-d/th1)*INC; 0 0 0 1; (-c/th2)*INC (-d/th2)*INC (-c/th2)*INC (-(d2+d)/th2)*INC];
+ 
+model=sim('Control_Plant_Simulation_2018b',10);
 
-%% run simulink file 
-model=sim('Control_Plant_Simulation_2018b')
-
-%% table generations for simulinki 
+% %% table generations for simulink
 model_plant_r=stepinfo(model.plant.data,model.plant.time);
 model_plant_uc_r=stepinfo(model.plant_uc.data,model.plant_uc.time);
 model_plant_r_uc_pu=stepinfo(model.plant_uc_pu.data,model.plant_uc_pu.time);
@@ -183,7 +182,7 @@ Overshoot={model_plant_r.Overshoot;model_plant_uc_r.Overshoot;model_plant_r_uc_p
 Metrics_from_simulink=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(Metrics_from_simulink)
 
-%% Simulations
+% %% Simulations
 subplot(4,4,[1,2,3,4]);
 plot(model.plant), grid on, title('PLANT')
 subplot(445);
