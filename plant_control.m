@@ -149,10 +149,10 @@ step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
 sgtitle('SIMULATIONS FROM MATLAB')
 %% Simulink
 %Input and output disturbances
-PI=1.5;
-PO=0.001;
+PI=0.000001;
+PO=0.000001;
 %Parametric uncertainty
-INC=1.05;
+INC=25;
 A1 = [0 1 0 0;(-c/th1)*INC (-(d1+d)/th1)*INC (-c/th1)*INC (-d/th1)*INC; 0 0 0 1; (-c/th2)*INC (-d/th2)*INC (-c/th2)*INC (-(d2+d)/th2)*INC];
 
 %% table generations for simulinki 
