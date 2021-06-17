@@ -113,51 +113,40 @@ Aoc = A-L*C-B*kn+L*D*kn;
 Boc = [B-L*D L];
 Coc = -kn;
 Doc = [1 0];
-plant_uc_obsco=ss(Aoc,Boc,Coc,Doc);
 
 % Observer + Controller Space State + Static Control
 Aocc = [A-L*C-B*kn+L*D*kn -B*ke+L*D*ke; zeros(1,n) 0];
 Bocc = [zeros(n,1) L; 1 -1];
 Cocc = [-kn -ke];
 Docc = zeros(1,2);
-plant_uc_obscosc=ss(Aocc,Bocc,Cocc,Docc);
 
-%% table generations
+%% table generations 
 [y1,t1]=step(plant);plant_r=stepinfo(y1,t1);
 [y2,t2]=step(plant_uc);plant_uc_r=stepinfo(y2,t2);
-
 [y4,t4]=step(plant_uci);plant_uci_r=stepinfo(y4,t4);
 [y5,t5]=step(plant_ucitae);plant_ucitae_r=stepinfo(y5,t5);
-
 [y7,t7]=step(plant_ucitaei);plant_ucitaei_r=stepinfo(y7,t7);
 
-[y9,t9]=step(plant_uc_obscosc);plant_uc_obscosc_r=stepinfo(y9,t9);
+ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE INTEGRAL'};
+RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaei_r.RiseTime};
+SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaei_r.SettlingTime};
+Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaei_r.Overshoot};
 
-ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE INTEGRAL';'STATE OBSERVER'};
-RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaei_r.RiseTime;plant_uc_obscosc_r(1).RiseTime};
-SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaei_r.SettlingTime;plant_uc_obscosc_r(1).SettlingTime};
-Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaei_r.Overshoot;plant_uc_obscosc_r(1).Overshoot};
-
-T=table(ControlType,RiseTime,SettlingTime,Overshoot);
-disp(T)
+Metrics_from_matlab=table(ControlType,RiseTime,SettlingTime,Overshoot);
+disp(Metrics_from_matlab)
 
 %% Simulations
-subplot(321);
+subplot(3,2,[1,2]);
 step(plant), grid on, title('PLANT')
-subplot(322);
-step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
-
 subplot(323);
-step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
+step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
 subplot(324);
-step(plant_ucitae), grid on, title('PLANT UNDER CONTROL ITAE')
-
+step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
 subplot(325);
-step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
-
+step(plant_ucitae), grid on, title('PLANT UNDER CONTROL ITAE')
 subplot(326);
-step(plant_uc_obscosc(2)), grid on, title('PLANT UNDER CONTROL STATE OBSERVER')
-
+step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
+sgtitle('SIMULATIONS FROM MATLAB')
 %% Simulink
 %Input and output disturbances
 PI=1.5;
@@ -166,3 +155,55 @@ PO=0.001;
 INC=1.05;
 A1 = [0 1 0 0;(-c/th1)*INC (-(d1+d)/th1)*INC (-c/th1)*INC (-d/th1)*INC; 0 0 0 1; (-c/th2)*INC (-d/th2)*INC (-c/th2)*INC (-(d2+d)/th2)*INC];
 
+%% table generations for simulinki 
+out_plant_r=stepinfo(out.plant.data,out.plant.time);
+out_plant_uc_r=stepinfo(out.plant_uc.data,out.plant_uc.time);
+out_plant_r_uc_pu=stepinfo(out.plant_uc_pu.data,out.plant_uc_pu.time);
+out_plant_r_uc_iod=stepinfo(out.plant_uc_iod.data,out.plant_uc_iod.time);
+out_plant_uci_r=stepinfo(out.plant_uci.data,out.plant_uci.time);
+out_plant_ucipu_r=stepinfo(out.plant_uci_pu.data,out.plant_uci_pu.time);
+out_plant_uciiod_r=stepinfo(out.plant_uci_iod.data,out.plant_uci_iod.time);
+out_plant_ucitae_r=stepinfo(out.plant_ucitae.data,out.plant_ucitae.time);
+out_plant_r_ucitae_pu=stepinfo(out.plant_ucitae_pu.data,out.plant_ucitae_pu.time);
+out_plant_r_ucitae_iod=stepinfo(out.plant_ucitae_iod.data,out.plant_ucitae_iod.time);
+out_plant_ucitaei_r=stepinfo(out.plant_ucitaei.data,out.plant_ucitaei.time);
+out_plant_ucitaepu_r=stepinfo(out.plant_ucitae_pu.data,out.plant_ucitae_pu.time);
+out_plant_ucitaeiiod_r=stepinfo(out.plant_ucitae_iod.data,out.plant_ucitae_iod.time);
+
+ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT PARAM. UNCERTAINTY';'POLE PLACEMENT I/O DISTURB.';'POLE PLACEMENT INTEGRAL';'POLE PLACEMENT INTEGRAL PARAM. UNCERTAINTY';'POLE PLACEMENT INTEGRAL I/O DISTURB.';'ITAE';'ITAE PARAM. UNCERTAINTY';'ITAE I/O DISTURB.';'ITAE INTEGRAL';'ITAE INTEGRAL PARAM. UNCERTAINTY';'ITAE INTEGRAL I/O DISTURB.'};
+RiseTime={out_plant_r.RiseTime;out_plant_uc_r.RiseTime;out_plant_r_uc_pu.RiseTime;out_plant_r_uc_iod.RiseTime;out_plant_uci_r.RiseTime;out_plant_ucipu_r.RiseTime;out_plant_uciiod_r.RiseTime;out_plant_ucitae_r.RiseTime;out_plant_r_ucitae_pu.RiseTime;out_plant_r_ucitae_iod.RiseTime;out_plant_ucitaei_r.RiseTime;out_plant_ucitaepu_r.RiseTime;out_plant_ucitaeiiod_r.RiseTime};
+SettlingTime={out_plant_r.SettlingTime;out_plant_uc_r.SettlingTime;out_plant_r_uc_pu.SettlingTime;out_plant_r_uc_iod.SettlingTime;out_plant_uci_r.SettlingTime;out_plant_ucipu_r.SettlingTime;out_plant_uciiod_r.SettlingTime;out_plant_ucitae_r.SettlingTime;out_plant_r_ucitae_pu.SettlingTime;out_plant_r_ucitae_iod.SettlingTime;out_plant_ucitaei_r.SettlingTime;out_plant_ucitaepu_r.SettlingTime;out_plant_ucitaeiiod_r.SettlingTime};
+Overshoot={out_plant_r.Overshoot;out_plant_uc_r.Overshoot;out_plant_r_uc_pu.Overshoot;out_plant_r_uc_iod.Overshoot;out_plant_uci_r.Overshoot;out_plant_ucipu_r.Overshoot;out_plant_uciiod_r.Overshoot;out_plant_ucitae_r.Overshoot;out_plant_r_ucitae_pu.Overshoot;out_plant_r_ucitae_iod.Overshoot;out_plant_ucitaei_r.Overshoot;out_plant_ucitaepu_r.Overshoot;out_plant_ucitaeiiod_r.Overshoot};
+
+Metrics_from_simulink=table(ControlType,RiseTime,SettlingTime,Overshoot);
+disp(Metrics_from_simulink)
+
+%% Simulations
+subplot(4,4,[1,2,3,4]);
+step(plant), grid on, title('PLANT')
+subplot(445);
+step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
+subplot(446);
+step(plant_uci), grid on, title('POLE PLACEMENT PARAM. UNCERTAINTY')
+subplot(447);
+step(plant_uci), grid on, title('POLE PLACEMENT I/O DISTURB.')
+subplot(448);
+step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
+subplot(449);
+step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL PARAM. UNCERTAINTY')
+subplot(4,4,10);
+step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL I/O DISTURB.')
+subplot(4,4,11);
+step(plant_uci), grid on, title('PLANT - ITAE')
+subplot(4,4,12);
+step(plant_uci), grid on, title('PLANT - ITAE PARAM. UNCERTAINTY ')
+subplot(4,4,13);
+step(plant_uci), grid on, title('PLANT - ITAE PARAM. I/O DISTURB. ')
+subplot(4,4,14);
+step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
+subplot(4,4,15);
+step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL PARAM. UNCERTAINTY ')
+subplot(4,4,16);
+step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL I/O DISTURB.')
+
+sgtitle('SIMULATIONS FROM SIMULINK')
