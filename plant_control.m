@@ -51,8 +51,12 @@ n=size(A);
 n=n(1);
 m=size(C);
 m=m(1);
+% a, b extended matrix
 Aext=[A zeros(n,1); -C zeros(m,1)];
 Bext=[B; -D];
+% Controllability of extended matrix
+Co_ext = ctrb(Aext,Bext);
+
 p5=real(p1)*10-1;
 kext=place(Aext,Bext,[p1,p2,p3,p4,p5]);
 kn=kext(1:n);
@@ -168,3 +172,4 @@ PO=0.001;
 %Parametric uncertainty
 INC=1.05;
 A1 = [0 1 0 0;(-c/th1)*INC (-(d1+d)/th1)*INC (-c/th1)*INC (-d/th1)*INC; 0 0 0 1; (-c/th2)*INC (-d/th2)*INC (-c/th2)*INC (-(d2+d)/th2)*INC];
+
