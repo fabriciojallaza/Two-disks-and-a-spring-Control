@@ -1,3 +1,5 @@
+clc
+clear
 %% Plant definition
 %Variables
 th1=0.0019;
@@ -155,55 +157,58 @@ PO=0.000001;
 INC=25;
 A1 = [0 1 0 0;(-c/th1)*INC (-(d1+d)/th1)*INC (-c/th1)*INC (-d/th1)*INC; 0 0 0 1; (-c/th2)*INC (-d/th2)*INC (-c/th2)*INC (-(d2+d)/th2)*INC];
 
+%% run simulink file 
+model=sim('Control_Plant_Simulation_2018b')
+
 %% table generations for simulinki 
-out_plant_r=stepinfo(out.plant.data,out.plant.time);
-out_plant_uc_r=stepinfo(out.plant_uc.data,out.plant_uc.time);
-out_plant_r_uc_pu=stepinfo(out.plant_uc_pu.data,out.plant_uc_pu.time);
-out_plant_r_uc_iod=stepinfo(out.plant_uc_iod.data,out.plant_uc_iod.time);
-out_plant_uci_r=stepinfo(out.plant_uci.data,out.plant_uci.time);
-out_plant_ucipu_r=stepinfo(out.plant_uci_pu.data,out.plant_uci_pu.time);
-out_plant_uciiod_r=stepinfo(out.plant_uci_iod.data,out.plant_uci_iod.time);
-out_plant_ucitae_r=stepinfo(out.plant_ucitae.data,out.plant_ucitae.time);
-out_plant_r_ucitae_pu=stepinfo(out.plant_ucitae_pu.data,out.plant_ucitae_pu.time);
-out_plant_r_ucitae_iod=stepinfo(out.plant_ucitae_iod.data,out.plant_ucitae_iod.time);
-out_plant_ucitaei_r=stepinfo(out.plant_ucitaei.data,out.plant_ucitaei.time);
-out_plant_ucitaepu_r=stepinfo(out.plant_ucitae_pu.data,out.plant_ucitae_pu.time);
-out_plant_ucitaeiiod_r=stepinfo(out.plant_ucitae_iod.data,out.plant_ucitae_iod.time);
+model_plant_r=stepinfo(model.plant.data,model.plant.time);
+model_plant_uc_r=stepinfo(model.plant_uc.data,model.plant_uc.time);
+model_plant_r_uc_pu=stepinfo(model.plant_uc_pu.data,model.plant_uc_pu.time);
+model_plant_r_uc_iod=stepinfo(model.plant_uc_iod.data,model.plant_uc_iod.time);
+model_plant_uci_r=stepinfo(model.plant_uci.data,model.plant_uci.time);
+model_plant_ucipu_r=stepinfo(model.plant_uci_pu.data,model.plant_uci_pu.time);
+model_plant_uciiod_r=stepinfo(model.plant_uci_iod.data,model.plant_uci_iod.time);
+model_plant_ucitae_r=stepinfo(model.plant_ucitae.data,model.plant_ucitae.time);
+model_plant_r_ucitae_pu=stepinfo(model.plant_ucitae_pu.data,model.plant_ucitae_pu.time);
+model_plant_r_ucitae_iod=stepinfo(model.plant_ucitae_iod.data,model.plant_ucitae_iod.time);
+model_plant_ucitaei_r=stepinfo(model.plant_ucitaei.data,model.plant_ucitaei.time);
+model_plant_ucitaepu_r=stepinfo(model.plant_ucitae_pu.data,model.plant_ucitae_pu.time);
+model_plant_ucitaeiiod_r=stepinfo(model.plant_ucitae_iod.data,model.plant_ucitae_iod.time);
 
 ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT PARAM. UNCERTAINTY';'POLE PLACEMENT I/O DISTURB.';'POLE PLACEMENT INTEGRAL';'POLE PLACEMENT INTEGRAL PARAM. UNCERTAINTY';'POLE PLACEMENT INTEGRAL I/O DISTURB.';'ITAE';'ITAE PARAM. UNCERTAINTY';'ITAE I/O DISTURB.';'ITAE INTEGRAL';'ITAE INTEGRAL PARAM. UNCERTAINTY';'ITAE INTEGRAL I/O DISTURB.'};
-RiseTime={out_plant_r.RiseTime;out_plant_uc_r.RiseTime;out_plant_r_uc_pu.RiseTime;out_plant_r_uc_iod.RiseTime;out_plant_uci_r.RiseTime;out_plant_ucipu_r.RiseTime;out_plant_uciiod_r.RiseTime;out_plant_ucitae_r.RiseTime;out_plant_r_ucitae_pu.RiseTime;out_plant_r_ucitae_iod.RiseTime;out_plant_ucitaei_r.RiseTime;out_plant_ucitaepu_r.RiseTime;out_plant_ucitaeiiod_r.RiseTime};
-SettlingTime={out_plant_r.SettlingTime;out_plant_uc_r.SettlingTime;out_plant_r_uc_pu.SettlingTime;out_plant_r_uc_iod.SettlingTime;out_plant_uci_r.SettlingTime;out_plant_ucipu_r.SettlingTime;out_plant_uciiod_r.SettlingTime;out_plant_ucitae_r.SettlingTime;out_plant_r_ucitae_pu.SettlingTime;out_plant_r_ucitae_iod.SettlingTime;out_plant_ucitaei_r.SettlingTime;out_plant_ucitaepu_r.SettlingTime;out_plant_ucitaeiiod_r.SettlingTime};
-Overshoot={out_plant_r.Overshoot;out_plant_uc_r.Overshoot;out_plant_r_uc_pu.Overshoot;out_plant_r_uc_iod.Overshoot;out_plant_uci_r.Overshoot;out_plant_ucipu_r.Overshoot;out_plant_uciiod_r.Overshoot;out_plant_ucitae_r.Overshoot;out_plant_r_ucitae_pu.Overshoot;out_plant_r_ucitae_iod.Overshoot;out_plant_ucitaei_r.Overshoot;out_plant_ucitaepu_r.Overshoot;out_plant_ucitaeiiod_r.Overshoot};
+RiseTime={model_plant_r.RiseTime;model_plant_uc_r.RiseTime;model_plant_r_uc_pu.RiseTime;model_plant_r_uc_iod.RiseTime;model_plant_uci_r.RiseTime;model_plant_ucipu_r.RiseTime;model_plant_uciiod_r.RiseTime;model_plant_ucitae_r.RiseTime;model_plant_r_ucitae_pu.RiseTime;model_plant_r_ucitae_iod.RiseTime;model_plant_ucitaei_r.RiseTime;model_plant_ucitaepu_r.RiseTime;model_plant_ucitaeiiod_r.RiseTime};
+SettlingTime={model_plant_r.SettlingTime;model_plant_uc_r.SettlingTime;model_plant_r_uc_pu.SettlingTime;model_plant_r_uc_iod.SettlingTime;model_plant_uci_r.SettlingTime;model_plant_ucipu_r.SettlingTime;model_plant_uciiod_r.SettlingTime;model_plant_ucitae_r.SettlingTime;model_plant_r_ucitae_pu.SettlingTime;model_plant_r_ucitae_iod.SettlingTime;model_plant_ucitaei_r.SettlingTime;model_plant_ucitaepu_r.SettlingTime;model_plant_ucitaeiiod_r.SettlingTime};
+Overshoot={model_plant_r.Overshoot;model_plant_uc_r.Overshoot;model_plant_r_uc_pu.Overshoot;model_plant_r_uc_iod.Overshoot;model_plant_uci_r.Overshoot;model_plant_ucipu_r.Overshoot;model_plant_uciiod_r.Overshoot;model_plant_ucitae_r.Overshoot;model_plant_r_ucitae_pu.Overshoot;model_plant_r_ucitae_iod.Overshoot;model_plant_ucitaei_r.Overshoot;model_plant_ucitaepu_r.Overshoot;model_plant_ucitaeiiod_r.Overshoot};
 
 Metrics_from_simulink=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(Metrics_from_simulink)
 
 %% Simulations
 subplot(4,4,[1,2,3,4]);
-step(plant), grid on, title('PLANT')
+plot(model.plant), grid on, title('PLANT')
 subplot(445);
-step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
+plot(model.plant_uc), grid on, title('PLANT - POLE PLACEMENT')
 subplot(446);
-step(plant_uci), grid on, title('POLE PLACEMENT PARAM. UNCERTAINTY')
+plot(model.plant_uc_pu), grid on, title('POLE PLACEMENT PARAM. UNCERTAINTY')
 subplot(447);
-step(plant_uci), grid on, title('POLE PLACEMENT I/O DISTURB.')
+plot(model.plant_uc_iod), grid on, title('POLE PLACEMENT I/O DISTURB.')
 subplot(448);
-step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
+plot(model.plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
 subplot(449);
-step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL PARAM. UNCERTAINTY')
+plot(model.plant_uci_pu), grid on, title('PLANT - POLE PLACEMENT INTEGRAL PARAM. UNCERTAINTY')
 subplot(4,4,10);
-step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL I/O DISTURB.')
+plot(model.plant_uci_iod), grid on, title('PLANT - POLE PLACEMENT INTEGRAL I/O DISTURB.')
 subplot(4,4,11);
-step(plant_uci), grid on, title('PLANT - ITAE')
+plot(model.plant_ucitae), grid on, title('PLANT - ITAE')
 subplot(4,4,12);
-step(plant_uci), grid on, title('PLANT - ITAE PARAM. UNCERTAINTY ')
+plot(model.plant_ucitae_pu), grid on, title('PLANT - ITAE PARAM. UNCERTAINTY ')
 subplot(4,4,13);
-step(plant_uci), grid on, title('PLANT - ITAE PARAM. I/O DISTURB. ')
+plot(model.plant_ucitae_iod), grid on, title('PLANT - ITAE PARAM. I/O DISTURB. ')
 subplot(4,4,14);
-step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
+plot(model.plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
 subplot(4,4,15);
-step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL PARAM. UNCERTAINTY ')
+plot(model.plant_ucitae_pu), grid on, title('PLANT - ITAE INTEGRAL PARAM. UNCERTAINTY ')
 subplot(4,4,16);
-step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL I/O DISTURB.')
+plot(model.plant_ucitae_iod), grid on, title('PLANT - ITAE INTEGRAL I/O DISTURB.')
 
 sgtitle('SIMULATIONS FROM SIMULINK')
