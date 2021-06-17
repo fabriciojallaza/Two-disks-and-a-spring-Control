@@ -102,10 +102,11 @@ R = 0.001;
 [klqr,S,E] = lqr(A,B,Q,R);
 Kpre=inv(-(C-D*klqr)*inv(A-B*klqr)*B+D);
 
+plant_uclqr= ss((A - B*Kpre), B, C, D);
 %% State Observer
 % Design
 PolesObs = p(1:n)*10;
-L = place(A',C', PolesObs)';
+L = place(A',C', PolesObs)'; %ganancia del obs
 
 % Observer + Controller Space State
 Aoc = A-L*C-B*kn+L*D*kn;
