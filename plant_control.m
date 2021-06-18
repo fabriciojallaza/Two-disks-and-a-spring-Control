@@ -184,6 +184,7 @@ Overshoot={model_plant_r.Overshoot;model_plant_uc_r.Overshoot;model_plant_r_uc_p
 Metrics_from_simulink=table(ControlType,RiseTime,SettlingTime,Overshoot);
 disp(Metrics_from_simulink)
 
+
 % %% Simulations
 subplot(4,4,[1,2,3,4]);
 plot(model.plant), grid on, title('PLANT')
