@@ -104,6 +104,8 @@ plant_ucitaei=ss([A-B*ki2 -B*kei;-C+D*ki2 D*kei],[zeros(n,1); 1],[C 0],0);
 PolesObs = p(1:n)*10;
 L = place(A',C', PolesObs)'; %ganancia del obs
 
+
+
 % Observer Space State
 Aobs = A - L*C;
 Bobs = [B-L*D L];
