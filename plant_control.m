@@ -104,53 +104,39 @@ plant_ucitaei=ss([A-B*ki2 -B*kei;-C+D*ki2 D*kei],[zeros(n,1); 1],[C 0],0);
 PolesObs = p(1:n)*10;
 L = place(A',C', PolesObs)'; %ganancia del obs
 
-
-
 % Observer Space State
 Aobs = A - L*C;
 Bobs = [B-L*D L];
 Cobs = eye(n);
 Dobs = zeros(n,2);
 
-% Observer + Controller Space State
-Aoc = A-L*C-B*kn+L*D*kn;
-Boc = [B-L*D L];
-Coc = -kn;
-Doc = [1 0];
-
-% Observer + Controller Space State + Static Control
-Aocc = [A-L*C-B*kn+L*D*kn -B*ke+L*D*ke; zeros(1,n) 0];
-Bocc = [zeros(n,1) L; 1 -1];
-Cocc = [-kn -ke];
-Docc = zeros(1,2);
-
-%% table generations 
-[y1,t1]=step(plant);plant_r=stepinfo(y1,t1);
-[y2,t2]=step(plant_uc);plant_uc_r=stepinfo(y2,t2);
-[y4,t4]=step(plant_uci);plant_uci_r=stepinfo(y4,t4);
-[y5,t5]=step(plant_ucitae);plant_ucitae_r=stepinfo(y5,t5);
-[y7,t7]=step(plant_ucitaei);plant_ucitaei_r=stepinfo(y7,t7);
-
-ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE INTEGRAL'};
-RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaei_r.RiseTime};
-SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaei_r.SettlingTime};
-Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaei_r.Overshoot};
-
-Metrics_from_matlab=table(ControlType,RiseTime,SettlingTime,Overshoot);
-disp(Metrics_from_matlab)
-
-%% Simulations
-subplot(3,2,[1,2]);
-step(plant), grid on, title('PLANT')
-subplot(323);
-step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
-subplot(324);
-step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
-subplot(325);
-step(plant_ucitae), grid on, title('PLANT UNDER CONTROL ITAE')
-subplot(326);
-step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
-sgtitle('SIMULATIONS FROM MATLAB')
+% %% table generations 
+% [y1,t1]=step(plant);plant_r=stepinfo(y1,t1);
+% [y2,t2]=step(plant_uc);plant_uc_r=stepinfo(y2,t2);
+% [y4,t4]=step(plant_uci);plant_uci_r=stepinfo(y4,t4);
+% [y5,t5]=step(plant_ucitae);plant_ucitae_r=stepinfo(y5,t5);
+% [y7,t7]=step(plant_ucitaei);plant_ucitaei_r=stepinfo(y7,t7);
+% 
+% ControlType={'Plant';'POLE PLACEMENT';'POLE PLACEMENT INTEGRAL';'ITAE';'ITAE INTEGRAL'};
+% RiseTime={plant_r.RiseTime;plant_uc_r.RiseTime;plant_uci_r.RiseTime;plant_ucitae_r.RiseTime;plant_ucitaei_r.RiseTime};
+% SettlingTime={plant_r.SettlingTime;plant_uc_r.SettlingTime;plant_uci_r.SettlingTime;plant_ucitae_r.SettlingTime;plant_ucitaei_r.SettlingTime};
+% Overshoot={plant_r.Overshoot;plant_uc_r.Overshoot;plant_uci_r.Overshoot;plant_ucitae_r.Overshoot;plant_ucitaei_r.Overshoot};
+% 
+% Metrics_from_matlab=table(ControlType,RiseTime,SettlingTime,Overshoot);
+% disp(Metrics_from_matlab)
+% 
+% %% Simulations
+% subplot(3,2,[1,2]);
+% step(plant), grid on, title('PLANT')
+% subplot(323);
+% step(plant_uc), grid on, title('PLANT - POLE PLACEMENT')
+% subplot(324);
+% step(plant_uci), grid on, title('PLANT - POLE PLACEMENT INTEGRAL')
+% subplot(325);
+% step(plant_ucitae), grid on, title('PLANT UNDER CONTROL ITAE')
+% subplot(326);
+% step(plant_ucitaei), grid on, title('PLANT - ITAE INTEGRAL')
+% sgtitle('SIMULATIONS FROM MATLAB')
 %% Simulink
 %Input and output disturbances
 PI=0.00001;
